@@ -2,9 +2,6 @@ const express = require('express');
 const request = require('request')
 const cheerio = require('cheerio');
 
-// const ALLTRAILS_URL = 'https://www.alltrails.com/trail/us/oregon/south-sister-trail';
-// const TEST_URL = 'https://quinnmil.github.io';
-
 
 var comments = function getComments (url, callback) {
     request(url, (error, response, html) => {
@@ -15,24 +12,36 @@ var comments = function getComments (url, callback) {
                 var author = $(el)
                     .find('span.xlate-none').text() 
                 var comment =$(el)
-                    .find('p.xlate-google').text()
+                    .find('p.xlate-google').text().replace(/[\t\n\\]+/g,' ')
                 var datePublished = $(el)
                     .find('span.subtext.pull-right').children('meta').attr('content')
+                var timeList = $(el)
+                    .find('span.subtext.pull-right').text().split(' ')
+                var timeSince;
+                if (timeList[1] === "hours") {
+                    timeSince = timeList[0] * 60;
+                }
+                else if (timeList[1] === "days") {
+                    timeSince = timeList[0] * (24*60);
+                }
+                var d = new Date(Date.now() - (timeSince * 60000))                
+                var postedTime = d.toString()                
+
                 comments.push({
                     author: author,
                     comment: comment,
-                    datePublished: datePublished
+                    datePublished: datePublished,
+                    timeStamp : postedTime
                 });
             });
-            console.log(comments);
-            return(callback(comments, false));
+            // console.log(comments);
+            return(callback(false, comments));
             }
         else {
             console.error("Bad Response:", response)
-            return(callback(null, response))
+            return(callback(response, null))
         }
-        })
-    // return response.render('allTrails', {data : comments})
+    })
 }
 
 module.exports = comments
