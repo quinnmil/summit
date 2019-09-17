@@ -6,8 +6,8 @@ const cheerio = require('cheerio');
 // const TEST_URL = 'https://quinnmil.github.io';
 
 
-var comments = function getComments (url) {
-    return request(url, (error, response, html) => {
+var comments = function getComments (url, callback) {
+    request(url, (error, response, html) => {
         if (!error && response.statusCode == 200) {
             var comments = []
             const $ = cheerio.load(html)
@@ -25,10 +25,11 @@ var comments = function getComments (url) {
                 });
             });
             console.log(comments);
-            return comments;
+            return(callback(comments, false));
             }
         else {
             console.error("Bad Response:", response)
+            return(callback(null, response))
         }
         })
     // return response.render('allTrails', {data : comments})
