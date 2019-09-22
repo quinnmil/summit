@@ -26,15 +26,16 @@ var comments = function getComments (url, callback) {
                 }
                 var d = new Date(Date.now() - (timeSince * 60000))                
                 // var postedTime = d.toString()
-
-                comments.push({
-                    timeStamp: d,
-                    source: "All Trails", 
-                    URL: url,
-                    text: comment,
-                    datePublished: datePublished,
-                    photo: null,
-                });
+                if (comment !== ""){
+                    comments.push({
+                        timeStamp: d,
+                        source: "All Trails", 
+                        URL: url,
+                        text: comment,
+                        datePublished: datePublished,
+                        photo: null,
+                    });
+                }
             });
             // console.log(comments);
             return(callback(false, comments));
