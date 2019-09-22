@@ -25,13 +25,15 @@ var comments = function getComments (url, callback) {
                     timeSince = timeList[0] * (24*60);
                 }
                 var d = new Date(Date.now() - (timeSince * 60000))                
-                var postedTime = d.toString()                
+                // var postedTime = d.toString()
 
                 comments.push({
-                    author: author,
-                    comment: comment,
+                    timeStamp: d,
+                    source: "All Trails", 
+                    URL: url,
+                    text: comment,
                     datePublished: datePublished,
-                    timeStamp : postedTime
+                    photo: null,
                 });
             });
             // console.log(comments);
