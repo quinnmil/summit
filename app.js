@@ -22,7 +22,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/at', allTrailsRouter)
 app.use('/update', updateRouter);
 
 // catch 404 and forward to error handler
