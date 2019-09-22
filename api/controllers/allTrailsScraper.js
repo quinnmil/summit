@@ -59,6 +59,8 @@ const makeRequest = function(url, latestPost, callback){
                 if(!err){
                     const $ = cheerio.load(html)
                     $('#reviews div.feed-item').each((i, el) => {
+                        var author = $(el)
+                            .find('span.xlate-none').text() 
                         var comment =$(el)
                             .find('p.xlate-google').text().replace(/[\t\n\\]+/g,' ')
                         // console.log("comment: " , comment);
@@ -77,13 +79,11 @@ const makeRequest = function(url, latestPost, callback){
                         // If the post is older than the latest in the db, stop here.
 
                         // issue is here, can't break out of loop without returning false. 
-                        console.log(" TIMING DEBUGGER --- d: ", d, "latest: ", latestPost);
-                        if (d < latestPost){
-                            console.log("comment is too old");
+                        console.log("author: ",author," \t\t" ," d: ", d," \t", "latest: "," \t", latestPost);
+                        if (d > latestPost && comment !== ""){
+                            console.log("adding a comment from author: ",author, "from: ", d, "since the latest post is from: ", latestPost);
+                            console.log("text: ", comment)
                             client.close();
-                            callback(null, comments);
-                        }
-                        else if (comment !== ""){
                             comments.push({
                                 timeStamp: d,
                                 source: "All Trails", 
@@ -92,13 +92,14 @@ const makeRequest = function(url, latestPost, callback){
                                 datePublished: datePublished,
                                 photo: null,
                             });
+                            // callback(null, comments);
                         }
                     });
                     client.close();
                     return callback(null, comments);
                 }
                 else {
-                    console.log('throwing here')
+                    console.log('client connection issue in scraper');
                     return callback(err, null);
                 }
             });
