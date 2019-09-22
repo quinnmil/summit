@@ -12,7 +12,10 @@ const ALLTRAILS_URL = 'https://www.alltrails.com/trail/us/oregon/south-sister-tr
 
 router.get('/', function(req, res) {
     scraper(ALLTRAILS_URL, function (err, data) {
-        if (err) return res.send(err);
+        if (err) {
+            console.log("bad scrape, ouch");
+            return res.send(err);
+        }
 
         client.connect(function (err) {
             if (!err) {

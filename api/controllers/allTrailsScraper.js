@@ -1,4 +1,4 @@
-const request = require('request')
+const request = require('request');
 const express = require('express');
 const cheerio = require('cheerio');
 
@@ -21,12 +21,12 @@ const comments = function getComments (url, callback) {
                     return(callback(err, null));
                 }
             })
-            }
-            else{
-                console.error("bad makeRequest")
-                return callback(err);
-            }
-        })
+        }
+        else{
+            console.log("bad makeRequest")
+            return callback(err, null);
+        }
+    })
 }        
 
 const getLatest = function(callback) {
@@ -51,7 +51,6 @@ const makeRequest = function(url, latestPost, callback){
             var comments = []
             client.connect (function (err) {
                 if(!err){
-                
                     const $ = cheerio.load(html)
                     $('#reviews div.feed-item').each((i, el) => {
                         var comment =$(el)
@@ -89,12 +88,13 @@ const makeRequest = function(url, latestPost, callback){
                     return callback(null, comments);
                 }
                 else {
+                    console.log('throwing here')
                     return callback(err, null);
                 }
             });
         }
         else {
-            console.error(" request error: ", error);
+            console.log(" request error: ", error);
         }
     })
 }
