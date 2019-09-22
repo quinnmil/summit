@@ -11,51 +11,61 @@ const ALLTRAILS_URL = 'https://www.alltrails.com/trail/us/oregon/south-sister-tr
 
 
 router.get('/', function(req, res) {
+    
     scraper(ALLTRAILS_URL, function (err, data) {
-        if (err) {
+        if (!err) {
+            ConnectMongo(function(err, db, collection){
+                if (!err){
+                    insertComments(collection, data, function(err, result) {
+                        if (!err) {
+                            console.log("no error on insert ");
+                            
+                            updateLatest(db, result, function (err, res) {
+                                if (!err){
+                                    console.log("sucessfully updated latest ", res);
+                                    client.close();
+                                    return res.send("success")
+                                }
+                                else {
+                                    console.log("there was a problem connecting: ", err);
+                                    client.close();
+                                    return res.send(err);
+                                }
+                            })
+                        }
+                        else {
+                            console.log("Error on insert: ", err);
+                            client.close();
+                            return res.send(err);
+                        }
+                    })
+                }
+                else {
+                    console.log("Mongo connection error");
+                    return res.send(err)
+                }
+             
+            })
+        } else{
             console.log("bad scrape, ouch");
             return res.send(err);
-        } 
-
-        client.connect(function (err) {
-            if (!err) {
-                console.log("Connected to Mongo Server");
-                const db = client.db("south_sister")
-                const collection = db.collection('Comments');
-    
-                insertComments(collection, data, function(err, result) {
-                    if (!err) {
-                        console.log("no error on insertComments. RESULT: ", result);
-                        
-                        updateLatest(db, result, function (err, res) {
-                            if (!err){
-                                console.log("sucessfully updated latest ", res);
-                                // res.send("success")
-                            }
-                            else {
-                                console.log("there was a problem connecting: ", err);
-                                // res.send(err);
-                            }
-                            client.close();
-                        })
-                    }
-                    else {
-                        console.log("Error on insert: ", err);
-                        client.close();
-                        // res.send(err);
-                    }
-                })
-            }
-            else {
-                console.log("Mongo connection error");
-                res.send(err)
-            }
-        })
+        }
     })
 })
 
+const ConnectMongo = function(callback){
+    client.connect(function (err) {
+        if (!err) {
+            console.log("Connected to Mongo Server");
+            const db = client.db("south_sister")
+            const collection = db.collection('Comments');
+            return callback(null, db, collection);
+        }
+        return callback(err, null, null);
+    })
+}
+
 const insertComments = function(collection, comments, callback) {
-    
     if (comments.length !== 0){
         collection.insertMany(comments, function (err, result){
             if (!err) {
@@ -92,7 +102,6 @@ const updateLatest = function(db, latest, callback) {
             return(callback(err));
             })
         }
-       // gets newest timestamp
 
 
 module.exports = router;

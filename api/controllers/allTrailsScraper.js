@@ -38,6 +38,7 @@ const getLatest = function(callback) {
             if (!err){
                 console.log("latest post:", result.timeStamp)
                     var latest = result.timeStamp;
+                    client.close()
                     return(callback(null, latest));
             }
             else {
@@ -74,10 +75,13 @@ const makeRequest = function(url, latestPost, callback){
                         }
                         var d = new Date(Date.now() - (timeSince * 60000)) 
                         // If the post is older than the latest in the db, stop here.
+
+                        // issue is here, can't break out of loop without returning false. 
                         console.log(" TIMING DEBUGGER --- d: ", d, "latest: ", latestPost);
                         if (d < latestPost){
                             console.log("comment is too old");
-                            return callback(null, comments);
+                            client.close();
+                            callback(null, comments);
                         }
                         else if (comment !== ""){
                             comments.push({
@@ -90,6 +94,7 @@ const makeRequest = function(url, latestPost, callback){
                             });
                         }
                     });
+                    client.close();
                     return callback(null, comments);
                 }
                 else {
@@ -97,9 +102,10 @@ const makeRequest = function(url, latestPost, callback){
                     return callback(err, null);
                 }
             });
+            client.close()
         }
         else {
-            console.log(" request error: ", error);
+            console.log("request error: ", error);
         }
     })
 }
