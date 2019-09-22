@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const scraper = require('../controllers/allTrailsScraper.js');
 
-var config = require('../config')
+var config = require('../../config')
 const MongoClient = require('mongodb').MongoClient;
 const client = new MongoClient(config.mongoURL, {useNewUrlParser: true});
 
