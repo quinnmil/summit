@@ -19,35 +19,45 @@ router.get('/', function(req, res) {
             if (!err) {
                 console.log("Connected to Mongo Server");
                 const db = client.db("south_sister")
+                const collection = db.collection('Comments');
+
     
-                insertComments(db, data, function() {
-                    console.log("Comments inserted, closing");
-                    client.close();
+                insertComments(collection, data, function(err, result) {
+                    if (!err) {
+                        console.log(result, "Comments inserted, closing");
+                        client.close();
+                    }
+                    console.log("Error on insert: ", err);
                 })
+                updateLatest(db, collection, function (err, result) {
+                    if (!err){
+                        console.log("result")
+                    }
+                } )
             }
             console.log("there was a problem connecting");
             client.close()
             res.send(err)
 
-        })
-        // res.send(data)
-        
+        })    
     })
-    // res.send("done");
 })
 
-const insertComments = function(db, comments, callback) {
-        const collection = db.collection('Comments');
+const insertComments = function(collection, comments, callback) {
         collection.insertMany(comments, function (err, result){
             if (!err) {
                 console.log("inserted", result.ops.length, "comments")
                 callback(result);
             }
-
-
         })
-
-    
     }
+
+const updateLatest = function(db, collection, callback) {
+    var latest = collection.find({}, {timeStamp: 1, _id: 0}).sort({timeStamp: -1}).limit(1).next();   // gets newest timestamp
+    const meta = db.collection('meta');
+
+    meta.updateOne({attribute: "latestComment"}, { $set: {timeStamp: latest['timeStamp']}}, {upsert: true})
+
+}
 
 module.exports = router;
