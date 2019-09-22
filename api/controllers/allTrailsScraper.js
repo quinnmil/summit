@@ -1,72 +1,102 @@
-const express = require('express');
 const request = require('request')
+const express = require('express');
 const cheerio = require('cheerio');
 
+var config = require('../../config')
+const MongoClient = require('mongodb').MongoClient;
+const client = new MongoClient(config.mongoURL, {useNewUrlParser: true});
 
-var comments = function getComments (url, callback) {
+const comments = function getComments (url, callback) {
+    getLatest(function (err, res) {
+        if (!err){
+            console.log("No error from get latest");
+            makeRequest(url, res, function (err, res) {
+                if (!err) {
+                    console.log("Good Response");
+                    // console.log("comments:" , comments)
+                    return (callback(false, res));
+                }
+                else {
+                    console.error("Bad response: ", err);
+                    return(callback(err, null));
+                }
+            })
+            }
+            else{
+                console.error("bad makeRequest")
+                return callback(err);
+            }
+        })
+}        
+
+const getLatest = function(callback) {
+    const db = client.db("south_sister");
+    db.collection('Meta').findOne({}, {attribute: "latestComment"}, function (err, result) {
+        if (!err){
+            console.log("latest post:", result.timeStamp)
+                var latest = result.timeStamp;
+                return(callback(null, latest));
+        }
+        else {
+            console.log("meta lookup error", err);
+            return(callback(err, null));
+        }
+    })
+}
+
+
+const makeRequest = function(url, latestPost, callback){
     request(url, (error, response, html) => {
         if (!error && response.statusCode == 200) {
             var comments = []
-            const $ = cheerio.load(html)
-            $('#reviews div.feed-item').each((i, el) => {
-                var author = $(el)
-                    .find('span.xlate-none').text() 
-                var comment =$(el)
-                    .find('p.xlate-google').text().replace(/[\t\n\\]+/g,' ')
-                var datePublished = $(el)
-                    .find('span.subtext.pull-right').children('meta').attr('content')
-                var timeList = $(el)
-                    .find('span.subtext.pull-right').text().split(' ')
-                var timeSince;
-                if (timeList[1] === "hours") {
-                    timeSince = timeList[0] * 60;
-                }
-                else if (timeList[1] === "days") {
-                    timeSince = timeList[0] * (24*60);
-                }
-                var d = new Date(Date.now() - (timeSince * 60000))                
-                // var postedTime = d.toString()
-                if (comment !== ""){
-                    comments.push({
-                        timeStamp: d,
-                        source: "All Trails", 
-                        URL: url,
-                        text: comment,
-                        datePublished: datePublished,
-                        photo: null,
+            client.connect (function (err) {
+                if(!err){
+                
+                    const $ = cheerio.load(html)
+                    $('#reviews div.feed-item').each((i, el) => {
+                        var comment =$(el)
+                            .find('p.xlate-google').text().replace(/[\t\n\\]+/g,' ')
+                        // console.log("comment: " , comment);
+                        var datePublished = $(el)
+                            .find('span.subtext.pull-right').children('meta').attr('content')
+                        var timeList = $(el)
+                            .find('span.subtext.pull-right').text().split(' ')
+                        var timeSince;
+                        if (timeList[1] === "hours") {
+                            timeSince = timeList[0] * 60;
+                        }
+                        else if (timeList[1] === "days") {
+                            timeSince = timeList[0] * (24*60);
+                        }
+                        var d = new Date(Date.now() - (timeSince * 60000)) 
+                        // If the post is older than the latest in the db, stop here.
+                        console.log(" TIMING DEBUGGER --- d: ", d, "latest: ", latestPost);
+                        if (d < latestPost){
+                            console.log("comment is too old");
+                            return callback(null, comments);
+                        }
+                        else if (comment !== ""){
+                            comments.push({
+                                timeStamp: d,
+                                source: "All Trails", 
+                                URL: url,
+                                text: comment,
+                                datePublished: datePublished,
+                                photo: null,
+                            });
+                        }
                     });
+                    return callback(null, comments);
+                }
+                else {
+                    return callback(err, null);
                 }
             });
-            // console.log(comments);
-            return(callback(false, comments));
-            }
+        }
         else {
-            console.error("Bad Response:", response)
-            return(callback(response, null))
+            console.error(" request error: ", error);
         }
     })
 }
 
 module.exports = comments
-
-// Query Examples for reference
-//         const projects = $('.projects')
-//         // console.log(projects.text())
-
-//         // const output = projects.find('h5').text();
-//         // const output = projects.children('h5').text(); // same as above
-//         // const output = projects.children('h5').parent().text();
-
-//         // looping through items
-//         $('.projects p').each((index, element) => {
-//             const item = $(element)
-//             .text()
-//             .replace(/\s\s+/g, '');     // remove spaces not between words
-//             console.log(item);
-            
-//         });
-//         $('.icons a').each((i, el) => {
-//             const link = $(el)
-//             // .find('a')
-//             .attr('href');
-//             console.log(link);
