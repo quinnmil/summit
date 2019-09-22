@@ -15,7 +15,7 @@ router.get('/', function(req, res) {
         if (err) {
             console.log("bad scrape, ouch");
             return res.send(err);
-        }
+        } 
 
         client.connect(function (err) {
             if (!err) {
@@ -38,17 +38,17 @@ router.get('/', function(req, res) {
                             }
                             client.close();
                         })
-                        res.send("done")
                     }
                     else {
                         console.log("Error on insert: ", err);
                         client.close();
-                        res.send(err);
+                        // res.send(err);
                     }
                 })
             }
             else {
                 console.log("Mongo connection error");
+                res.send(err)
             }
         })
     })

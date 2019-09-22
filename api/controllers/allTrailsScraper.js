@@ -30,18 +30,23 @@ const comments = function getComments (url, callback) {
 }        
 
 const getLatest = function(callback) {
-    const db = client.db("south_sister");
-    db.collection('Meta').findOne({}, {attribute: "latestComment"}, function (err, result) {
-        if (!err){
-            console.log("latest post:", result.timeStamp)
-                var latest = result.timeStamp;
-                return(callback(null, latest));
-        }
-        else {
-            console.log("meta lookup error", err);
-            return(callback(err, null));
-        }
-    })
+    client.connect(function (err) {
+        if (!err) {
+            console.log("Connected to Mongo Server");
+            const db = client.db("south_sister");
+            db.collection('Meta').findOne({}, {attribute: "latestComment"}, function (err, result) {
+            if (!err){
+                console.log("latest post:", result.timeStamp)
+                    var latest = result.timeStamp;
+                    return(callback(null, latest));
+            }
+            else {
+                console.log("meta lookup error", err);
+                return(callback(err, null));
+            }
+        })
+    }
+})
 }
 
 
