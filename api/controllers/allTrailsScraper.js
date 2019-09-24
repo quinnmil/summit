@@ -67,11 +67,11 @@ const scrapeComments = function (url, latestPost, callback) {
           .find('span.subtext.pull-right').text().split(' ')
 
         var timeSince = 0
-        if (timeList[1] === 'minutes') {
+        if (['minutes', 'minute'].includes(timeList[1])) {
           timeSince = timeList[0] * 60 // [minutes] * seconds
-        } else if (timeList[1] === 'hours') {
+        } else if (['hour', 'hours'].includes(timeList[1])) {
           timeSince = timeList[0] * (60 * 60) // [hours] * minutes * seconds
-        } else if (timeList[1] === 'days') {
+        } else if (['day', 'days'].includes(timeList[1])) {
           timeSince = timeList[0] * (24 * 60 * 60) // [days] * hours * minutes * seconds
         }
         var d = new Date(Date.now() - (timeSince * 1000)) // seconds * milliseconds
@@ -79,7 +79,7 @@ const scrapeComments = function (url, latestPost, callback) {
         console.log('author: ', author.padEnd(10), ' ', ' d: ', d, 'latest: ', latestPost)
         if (d > latestPost && comment !== '') {
           console.log(' ======= adding a comment from author: ', author.padEnd(10), 'from: ', d, 'since the latest post is from: ', latestPost)
-          console.log('text: ', comment)
+          // console.log('text: ', comment)
           comments.push({
             timeStamp: d,
             source: 'All Trails',
