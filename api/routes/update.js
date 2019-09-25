@@ -1,53 +1,84 @@
 
-const express = require('express');
-const router = express.Router();
-const scraper = require('../controllers/allTrailsScraper.js');
+const express = require('express')
+const router = express.Router()
+const scraper = require('../controllers/allTrailsScraper.js')
+const mongo = require('../helpers/mongo')
 
-var config = require('../../config')
-const MongoClient = require('mongodb').MongoClient;
-const client = new MongoClient(config.mongoURL, {useNewUrlParser: true});
+const ALLTRAILS_URL = 'https://www.alltrails.com/trail/us/oregon/south-sister-trail'
 
-const ALLTRAILS_URL = 'https://www.alltrails.com/trail/us/oregon/south-sister-trail';
-
-
-router.get('/', function(req, res) {
-    console.log("uri: ", config.mongoURL)
-    scraper(ALLTRAILS_URL, function (err, data) {
-        if (err) return res.send(err);
-
-        client.connect (function (err) {
+router.get('/', function (req, res) {
+  scraper(ALLTRAILS_URL, function (err, data) {
+    if (!err) {
+      mongo.connect('south_sister', 'Comments', function (err, db, collection) {
+        if (!err) {
+          insertComments(collection, data, function (err, result) {
             if (!err) {
-                console.log("Connected to Mongo Server");
-                const db = client.db("south_sister")
-    
-                insertComments(db, data, function() {
-                    console.log("Comments inserted, closing");
-                    client.close();
+              console.log('No error on insert')
+              if (result) {
+                updateLatest(db, result, function (err) {
+                  if (!err) {
+                    console.log('sucessfully updated latest timestamp')
+                    mongo.close()
+                    return res.send('success')
+                  } else {
+                    console.log('there was a problem connecting: ', err)
+                    mongo.close()
+                    return res.send(err)
+                  }
                 })
+              } else {
+                console.log('No new posts, not updating latest')
+                mongo.close()
+                return res.send('success')
+              }
+            } else {
+              console.log('Error on insert: ', err)
+              mongo.close()
+              return res.send(err)
             }
-            console.log("there was a problem connecting");
-            client.close()
-            res.send(err)
-
-        })
-        // res.send(data)
-        
-    })
-    // res.send("done");
+          })
+        } else {
+          console.log('Mongo connection error')
+          return res.send(err)
+        }
+      })
+    } else {
+      console.log('bad scrape, ouch')
+      return res.send(err)
+    }
+  })
 })
 
-const insertComments = function(db, comments, callback) {
-        const collection = db.collection('Comments');
-        collection.insertMany(comments, function (err, result){
-            if (!err) {
-                console.log("inserted", result.ops.length, "comments")
-                callback(result);
-            }
+const insertComments = function (collection, comments, callback) {
+  if (comments.length !== 0) {
+    collection.insertMany(comments, function (err, result) {
+      if (!err) {
+        console.log('inserted', result.ops.length, 'comments')
+        var latest = result.ops[0].timeStamp // this will be the most recent comment. might need to update later.
+        return (callback(null, latest))
+      } else {
+        return callback(err, null)
+      }
+    })
+  } else {
+    return (callback(null, null))
+  }
+}
 
-
-        })
-
-    
+const updateLatest = function (db, latest, callback) {
+  console.log('calling updateLatest')
+  const meta = db.collection('Meta')
+  meta.updateOne({ attribute: 'latestComment' }, { $set: { timeStamp: latest } }, { upsert: true }, function (err, res) {
+    if (!err) {
+      console.log('Updated latest comment to: ', latest)
+      return (callback(null, res))
     }
+    console.log('error in updateLatest()', err)
+    return (callback(err))
+  })
+}
 
-module.exports = router;
+module.exports = router
+
+// // query to find the latest post
+// collection.find({}, {timeStamp: 1, _id: 0}).sort({timeStamp: -1}, function(err, cursor) {

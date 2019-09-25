@@ -16,7 +16,8 @@
     "mongodb": "^3.3.2",
     "morgan": "~1.9.1",
     "pug": "^2.0.4",
-    "request": "^2.88.0"
+    "request": "^2.88.0",
+    "standard": "^14.3.1"
   },
   "devDependencies": {
     "eslint": "^6.4.0",
