@@ -4,14 +4,13 @@ const cheerio = require('cheerio')
 
 const mongo = require('../helpers/mongo')
 
-const comments = function getComments (url, callback) {
+const comments = function (url, callback) {
   getLatest(function (err, latest) {
     if (!err) {
       console.log('No error from get latest')
       scrapeComments(url, latest, function (err, res) {
         if (!err) {
           console.log('Good Response')
-          // console.log("comments:" , comments)
           return (callback(null, res))
         } else {
           console.error('Bad response: ', err)
@@ -36,8 +35,8 @@ const getLatest = function (callback) {
             var d = new Date(2015, 1, 1)
             return (callback(null, d))
           }
-          console.log('latest post:', result.timeStamp)
-          var latest = result.timeStamp
+          var latest = new Date(result.timeStamp)
+          console.log('latest post:', latest)
           mongo.close()
           return (callback(null, latest))
         } else {
@@ -60,7 +59,7 @@ const scrapeComments = function (url, latestPost, callback) {
           .find('span.xlate-none').text()
         var comment = $(el)
           .find('p.xlate-google').text().replace(/[\t\n\\]+/g, ' ')
-          // console.log("comment: " , comment);
+          // console.log("comment: " , comment)
         var datePublished = $(el)
           .find('span.subtext.pull-right').children('meta').attr('content')
         var timeList = $(el)
@@ -74,12 +73,13 @@ const scrapeComments = function (url, latestPost, callback) {
         } else if (['day', 'days'].includes(timeList[1])) {
           timeSince = timeList[0] * (24 * 60 * 60) // [days] * hours * minutes * seconds
         }
-        var d = new Date(Date.now() - (timeSince * 1000)) // seconds * milliseconds
+        var d = new Date()
+        d = d.setSeconds(0,0) - (timeSince * 1000)
+        d = new Date(d)
         // this will still process though every comment on page.
-        console.log('author: ', author.padEnd(10), ' ', ' d: ', d, 'latest: ', latestPost)
+        console.log('author: ', author.padEnd(10), ' d: ', d, 'latest: ', latestPost)
         if (d > latestPost && comment !== '') {
           console.log(' ======= adding a comment from author: ', author.padEnd(10), 'from: ', d, 'since the latest post is from: ', latestPost)
-          // console.log('text: ', comment)
           comments.push({
             timeStamp: d,
             source: 'All Trails',
