@@ -19,3 +19,7 @@ Back-end API = Express
 
 - In `api/`
 - Port `9000`
+
+## Style
+
+[Standard JS Style](https://standardjs.com/)
