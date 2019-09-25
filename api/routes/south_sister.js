@@ -7,7 +7,7 @@ router.get('/', function (req, res) {
     if (!err) {
       var amount = typeof (req.query.amt) !== 'undefined' ? req.query.amt : 10
       console.log('Getting ', amount, 'entries from database')
-      collection.find().sort({ timeStamp: -1 }).limit(amount).toArray(function (err, result) {
+      collection.find().sort({ timeStamp: -1 }).limit(parseInt(amount)).toArray(function (err, result) {
         if (!err) {
           console.log(result)
           res.json(result)
