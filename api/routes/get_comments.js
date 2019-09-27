@@ -2,8 +2,11 @@ const express = require('express')
 const router = express.Router()
 const mongo = require('../helpers/mongo')
 
-router.get('/', function (req, res) {
-  mongo.connect('south_sister', 'Comments', function (err, db, collection) {
+router.get('/:mountain/:trail', function (req, res) {
+  var mountain = req.params.mountain
+  var trail = req.params.trail
+  // if not trail, get comments from everything
+  mongo.connect(mountain, trail + '_comments', function (err, db, collection) {
     if (!err) {
       var amount = typeof (req.query.amt) !== 'undefined' ? req.query.amt : 10
       console.log('Getting ', amount, 'entries from database')

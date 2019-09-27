@@ -8,7 +8,7 @@ var cors = require('cors')
 var indexRouter = require('./routes/index')
 var usersRouter = require('./routes/users')
 var updateRouter = require('./routes/update')
-var southsisterRouter = require('./routes/south_sister')
+var getCommentsRouter = require('./routes/get_comments')
 
 var app = express()
 
@@ -22,7 +22,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use('/', indexRouter)
 app.use('/users', usersRouter)
 app.use('/update', updateRouter)
-app.use('/south_sister', southsisterRouter)
+app.use('/get_comments', getCommentsRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

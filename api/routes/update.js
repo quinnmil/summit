@@ -9,7 +9,7 @@ const ALLTRAILS_URL = 'https://www.alltrails.com/trail/us/oregon/south-sister-tr
 router.get('/', function (req, res) {
   scraper(ALLTRAILS_URL, function (err, data) {
     if (!err) {
-      mongo.connect('south_sister', 'Comments', function (err, db, collection) {
+      mongo.connect('south_sister', 'south_ridge' + '_comments', function (err, db, collection) {
         if (!err) {
           insertComments(collection, data, function (err, result) {
             if (!err) {
