@@ -1,5 +1,4 @@
 const request = require('request')
-const express = require('express')
 const cheerio = require('cheerio')
 
 const mongo = require('../helpers/mongo')
@@ -74,7 +73,7 @@ const scrapeComments = function (url, latestPost, callback) {
           timeSince = timeList[0] * (24 * 60 * 60) // [days] * hours * minutes * seconds
         }
         var d = new Date()
-        d = d.setSeconds(0,0) - (timeSince * 1000)
+        d = d.setSeconds(0, 0) - (timeSince * 1000)
         d = new Date(d)
         // this will still process though every comment on page.
         console.log('author: ', author.padEnd(10), ' d: ', d, 'latest: ', latestPost)
