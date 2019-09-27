@@ -3,7 +3,12 @@ const cheerio = require('cheerio')
 
 const scrapeComments = function (url, latestPost, callback) {
   var today = new Date() // Current day
-  today = new Date(today.setHours(24, 0, 0, 0)) // Next midnight
+  console.log('Today is: ', today.toISOString())
+  console.log('Today is: ', today.toUTCString())
+  // milli stores the milliseconds
+  var milli = today.setUTCHours(24, 0, 0, 0) // Set to midnight, remains a Date object
+  console.log('Today is: ', today.toISOString())
+  console.log('Today is: ', today.toUTCString())
   request(url, (error, response, html) => {
     if (!error && response.statusCode === 200) {
       var comments = []
