@@ -5,7 +5,6 @@ const mongo = require('../helpers/mongo')
 router.get('/:mountain/:trail', function (req, res) {
   var mountain = req.params.mountain
   var trail = req.params.trail
-  // if not trail, get comments from everything
   mongo.connect(mountain, trail + '_comments', function (err, db, collection) {
     if (!err) {
       var amount = typeof (req.query.amt) !== 'undefined' ? req.query.amt : 10
@@ -21,7 +20,7 @@ router.get('/:mountain/:trail', function (req, res) {
         }
       })
     } else {
-      console.log('error no connect')
+      console.log('error on connect')
       mongo.close()
       res.send(err)
     }
