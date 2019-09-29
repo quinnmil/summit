@@ -1,16 +1,19 @@
 const express = require('express')
 const router = express.Router()
 const request = require('request')
+const config = require('../../config')
 
-const SOUTH_SISTER_URL = 'https://api.weather.gov/points/44.1034,-121.7692'
+// SOUTH_SISTER_URL = 'https://api.weather.gov/points/44.1034,-121.7692'
 // 44.1034, -121.7692 -- South Sister
 
 var options = {
   headers: { 'user-agent': 'node.js' }
 }
 
-router.get('/', function (req, res) {
-  getWeather(SOUTH_SISTER_URL, function (err, data) {
+router.get('/:mountain', function (req, res) {
+  var mountain = req.params.mountain
+  var url = config.NWSURL + config[mountain]
+  getWeather(url, function (err, data) {
     if (!err) {
       res.send(data)
     } else {
