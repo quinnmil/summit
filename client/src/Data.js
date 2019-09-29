@@ -1,27 +1,61 @@
 import React from 'react'
+import axios from 'axios' // Used for making AJAX requests
+
+const API = 'http://localhost:9000/get_comments/south_sister/south_ridge'
 
 class Data extends React.Component {
   constructor (props) {
     super(props)
-    this.state = { apiResponse: '' }
+    this.state = {
+      error: null,
+      isLoaded: false,
+      items: []
+    }
   }
 
   callAPI () {
-    /* global fetch */
-    fetch('http://localhost:9000/users')
-      .then(res => res.json()) /* get the JSON response */
-      .then(data => this.setState({ apiResponse: data }))
+    // Make a get request
+    axios.get(API)
+      .then(response => {
+        // Handle success
+        this.setState({
+          isLoaded: true,
+          items: response.data
+        })
+      },
+      error => {
+        this.setState({
+          isLoaded: true,
+          error
+        })
+      })
   }
 
   componentDidMount () {
+    // Load data into component here
+    // this allows you load it into
+    // the component's state
     this.callAPI()
   }
 
   render () {
-    const { apiResponse } = this.state
-    return (
-      <p>{apiResponse.test}</p>
-    )
+    const { error, isLoaded, items } = this.state
+    if (error) {
+      return <div>Error: {error.message}</div>
+    } else if (!isLoaded) {
+      /* Show loading indicator while fetching data */
+      return <div>Loading...</div>
+    } else {
+      return (
+        <ul>
+          {items.map(item => (
+            <li key={item.id}>
+              {item.datePublished}: {item.text}
+            </li>
+          ))}
+        </ul>
+      )
+    }
   }
 }
 
