@@ -1,5 +1,5 @@
 body {
-  background-color: #efe2d1;
+  background-color: #292F36;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -15,11 +15,15 @@ body {
 p {
   text-align: center;
   font-family: 'Raleway', sans-serif;
-  color: #733636;
+  color: #4ECDC4;
 }
 
 h1 {
   text-align: center;
   font-family: 'Poller One', cursive;
-  color: #5b7c5b;
+  color: #F7FFF7;
+}
+
+li {
+  color: #4ECDC4;
 }

@@ -1,7 +1,7 @@
 import React from 'react'
 import axios from 'axios' // Used for making AJAX requests
 
-const API = 'https://jsonplaceholder.typicode.com/users'
+const API = 'http://localhost:9000/get_comments/south_sister/south_ridge'
 
 class Data extends React.Component {
   constructor (props) {
@@ -50,7 +50,7 @@ class Data extends React.Component {
         <ul>
           {items.map(item => (
             <li key={item.id}>
-              {item.name}: {item.email}
+              {item.datePublished}: {item.text}
             </li>
           ))}
         </ul>
