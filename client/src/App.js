@@ -1,14 +1,14 @@
-import React from 'react';
+import React from 'react'
 
-function App() {
+function App () {
   return (
     <div>
-        <h1>SUMMIT</h1>
-        <p>
+      <h1>SUMMIT</h1>
+      <p>
           Coming Soon...
-        </p>
+      </p>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
