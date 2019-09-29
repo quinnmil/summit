@@ -23,7 +23,21 @@ const getWeather = function (url, callback) {
   request(url, options, function (err, res) {
     if (!err) {
       console.log('No error from getWeather')
-      callback(null, res.body)
+      var obj = JSON.parse(res.body)
+      var forecastURL = obj.properties.forecast
+      request(forecastURL, options, function getForecast (err, res) {
+        if (!err) {
+          var forecast = JSON.parse(res.body)
+          var twoPeriods = [forecast.properties.periods[0], forecast.properties.periods[1]]
+          callback(null, twoPeriods)
+        } else {
+          console.log('error in getForecast')
+          callback(err, null)
+        }
+      })
+    } else {
+      console.log('error in getWeather')
+      callback(err, null)
     }
   })
 }
