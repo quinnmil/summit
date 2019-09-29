@@ -22,14 +22,12 @@ class Data extends React.Component {
           isLoaded: true,
           items: response.data
         })
-      }
-      )
-      .catch(function (error) {
-        // Handle error
-        console.log(error)
-      })
-      .finally(function () {
-        // Always executed
+      },
+      error => {
+        this.setState({
+          isLoaded: true,
+          error
+        })
       })
   }
 
@@ -41,16 +39,23 @@ class Data extends React.Component {
   }
 
   render () {
-    const { items } = this.state
-    return (
-      <ul>
-        {items.map(item => (
-          <li key={item.id}>
-            {item.name}: {item.email}
-          </li>
-        ))}
-      </ul>
-    )
+    const { error, isLoaded, items } = this.state
+    if (error) {
+      return <div>Error: {error.message}</div>
+    } else if (!isLoaded) {
+      /* Show loading indicator while fetching data */
+      return <div>Loading...</div>
+    } else {
+      return (
+        <ul>
+          {items.map(item => (
+            <li key={item.id}>
+              {item.name}: {item.email}
+            </li>
+          ))}
+        </ul>
+      )
+    }
   }
 }
 
