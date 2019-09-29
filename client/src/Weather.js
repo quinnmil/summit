@@ -1,9 +1,9 @@
 import React from 'react'
 import axios from 'axios' // Used for making AJAX requests
 
-const API = 'http://localhost:9000/get_comments/south_sister/south_ridge'
+const API = 'http://localhost:9000/get_weather/south_sister/'
 
-class Data extends React.Component {
+class Weather extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -49,8 +49,8 @@ class Data extends React.Component {
       return (
         <ul>
           {items.map(item => (
-            <li key={item._id}>
-              {item.datePublished}: {item.text}
+            <li key={item.number}>
+              {item.name}: {item.shortForecast}
             </li>
           ))}
         </ul>
@@ -59,4 +59,4 @@ class Data extends React.Component {
   }
 }
 
-export default Data
+export default Weather
