@@ -1,3 +1,4 @@
+/* General */
 body {
   background-color: #efe2d1;
   padding-top: 56px;
@@ -23,8 +24,13 @@ li {
   color: #000;
 }
 
-.card-title {
+#comment {
   text-align: left;
+  color: #000;
+}
+
+small {
+  font-family: 'Raleway', sans-serif;
 }
 
 /* Nav Bar */
@@ -44,4 +50,8 @@ li {
 
 a:hover {
   color: #000;
+}
+
+footer {
+  background-color: #5b7c5b;
 }
