@@ -55,6 +55,15 @@ a:hover {
   text-decoration: none;
 }
 
+/* Mountain */
+#mountain {
+  font-family: 'Raleway', sans-serif;
+}
+
+#mountain .card-title {
+  text-align: center;
+}
+
 /* Comments */
 
 #comment-box {
