@@ -35,7 +35,25 @@ a:hover {
   color: #efe2d1;
 }
 
-/* Trail list *
+/* Trail list */
+#trails {
+  text-align: center;
+  font-family: 'Raleway', sans-serif;
+}
+#trails .list-group-item {
+  color: #000;
+}
+
+#trails .list-group-item.active {
+  background-color: #5b7c5b; 
+  border-color: #5b7c5b; 
+  color: #efe2d1;
+}
+
+#trails a:hover {
+  color: #5b7c5b;
+  text-decoration: none;
+}
 
 /* Comments */
 #comment {
