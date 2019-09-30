@@ -10,26 +10,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+
 p {
-  text-align: center;
-  font-family: 'Raleway', sans-serif;
-  color: #733636;
-}
-
-h1 {
-  text-align: center;
-}
-
-li {
-  color: #000;
-}
-
-#comment {
-  text-align: left;
-  color: #000;
-}
-
-small {
+  /* All paragraphs should be in this font */
   font-family: 'Raleway', sans-serif;
 }
 
@@ -49,9 +32,26 @@ small {
 }
 
 a:hover {
+  color: #efe2d1;
+}
+
+/* Trail list *
+
+/* Comments */
+#comment {
+  text-align: left;
   color: #000;
 }
 
+small {
+  font-family: 'Raleway', sans-serif;
+}
+
+/* Footer */
 footer {
   background-color: #5b7c5b;
+}
+
+footer p{
+  color: #efe2d1;
 }
