@@ -47,14 +47,14 @@ class Weather extends React.Component {
       return <div>Loading...</div>
     } else {
       return (
-        <ul>
+        <div>
           {items.map(item => (
-            <li key={item.number}>
-              {item.name}: {item.shortForecast}
-            </li>
-          ))}
-        </ul>
-      )
+          <div class='weather_item' key={item.number}>
+            {item.name}: {item.shortForecast}
+          </div>          
+        ))}
+        </div>
+    )
     }
   }
 }
