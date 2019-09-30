@@ -13,6 +13,7 @@ router.get('/:mountain/:trail', function (req, res) {
         if (!err) {
           console.log(result)
           res.json(result)
+          mongo.close()
         } else {
           console.log('error on find')
           res.send(err)
