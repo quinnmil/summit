@@ -2,23 +2,88 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="theme-color" content="#000000" />
     <!-- Fonts! -->
     <link href="https://fonts.googleapis.com/css?family=Poller+One|Raleway&display=swap" rel="stylesheet">
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <title>Summit</title>
+    <title>Summit Watch</title>
   </head>
   <body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">Summit Watch</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#">Home
+              <span class="sr-only">(current)</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <!-- Link to list of mountains -->
+            <a class="nav-link" href="#">Mountains</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <!-- Page Content -->
+  <div class="container">
 
-    <div class="hero-image">
-        <div class="hero-text">
-          <div id="root"></div>
+    <div class="row">
+      <!-- List of trails -->
+      <div class="col-lg-3">
+        <h1 class="my-4">Trail</h1>
+        <div class="list-group">
+          <a href="#" class="list-group-item active">South Ridge</a>
         </div>
       </div>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="weather"></div>
-    <div id="data"></div>
+      <!-- /.col-lg-3 -->
+
+      <div class="col-lg-9">
+
+        <div class="card mt-4">
+          <img class="card-img-top img-thumbnail" src="../src/south_sister.jpg" alt="">
+          <div class="card-body">
+            <h3 class="card-title">South Sister</h3>
+            <h4>Weather</h4>
+            <div id="weather"></div>
+          </div>
+        </div>
+        <!-- /.card -->
+
+        <div class="card card-outline-secondary my-4">
+          <div class="card-header">
+            Recent Comments
+          </div>
+          <div class="card-body">
+            <div id="data"></div>
+            <a href="#" class="btn btn-success">Leave a Comment</a>
+          </div>
+        </div>
+        <!-- /.card -->
+
+      </div>
+      <!-- /.col-lg-9 -->
+
+    </div>
+
+  </div>
+  <!-- /.container -->
+    
+  <!-- Footer -->
+  <footer class="py-5">
+    <div class="container">
+      <p class="m-0 text-center">Copyright &copy; Summit Watch 2019</p>
+    </div>
+    <!-- /.container -->
+  </footer>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
   </body>
 </html>
