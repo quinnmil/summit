@@ -1,4 +1,5 @@
 import React from 'react'
+import Comments from './Comments'
 import axios from 'axios' // Used for making AJAX requests
 
 const API = 'http://localhost:9000/get_comments/south_sister/south_ridge'
@@ -47,13 +48,7 @@ class Data extends React.Component {
       return <div>Loading...</div>
     } else {
       return (
-        <ul>
-          {items.map(item => (
-            <li key={item._id}>
-              {item.datePublished}: {item.text}
-            </li>
-          ))}
-        </ul>
+        <Comments comments={items} />
       )
     }
   }

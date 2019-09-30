@@ -1,5 +1,5 @@
 body {
-  background-color: #292F36;
+  background-color: #efe2d1;
   height: 100%;
   /*display: flex;*/
   /*flex-direction: column;*/
@@ -20,21 +20,22 @@ html {
 p {
   text-align: center;
   font-family: 'Raleway', sans-serif;
-  color: #4ECDC4;
+  color: #733636;
 }
 
 h1 {
   text-align: center;
   font-family: 'Poller One', cursive;
-  color: #F7FFF7;
+  color: #5b7c5b;
 }
 
 li {
-  color: #4ECDC4;
+  color: #000;
 }
 
 .hero-image {
-  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("./south_sister.jpg");
+  /*background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("./south_sister.jpg");*/
+  background-image: url("./south_sister.jpg");
   height: 50%;
   background-position: center;
   background-repeat: no-repeat;
@@ -49,4 +50,8 @@ li {
   left: 50%;
   transform: translate(-50%, -50%);
   color: #F7FFF7;
+}
+
+.card-title {
+  text-align: left;
 }
