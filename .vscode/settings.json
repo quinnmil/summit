@@ -1,0 +1,13 @@
+{
+    // Do not use the default linter
+    "javascript.validate.enable": false,
+    // Do not use the default formatter
+    "javascript.format.enable": false,
+    // Lint with Standard JS
+    "standard.enable": true,
+    // Files to validate with Standard JS
+    "standard.validate": [
+        "javascript",
+        "javascriptreact"
+    ]
+}

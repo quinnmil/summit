@@ -1,0 +1,103 @@
+/* General */
+body {
+  background-color: #efe2d1;
+  padding-top: 56px;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+p {
+  /* All paragraphs should be in this font */
+  font-family: 'Raleway', sans-serif;
+}
+
+/* Nav Bar */
+.navbar-brand {
+  font-family: 'Poller One', cursive;
+  color: #fff;
+}
+
+.navbar {
+  background-color: #5b7c5b;
+}
+
+.nav-link {
+  color: #fff;
+  font-family: 'Raleway', sans-serif;
+}
+
+a:hover {
+  color: #efe2d1;
+}
+
+/* Trail list */
+#trails {
+  text-align: center;
+  font-family: 'Raleway', sans-serif;
+}
+#trails .list-group-item {
+  color: #000;
+}
+
+#trails .list-group-item.active {
+  background-color: #5b7c5b; 
+  border-color: #5b7c5b; 
+  color: #fff;
+}
+
+#trails a:hover {
+  color: #5b7c5b;
+  text-decoration: none;
+}
+
+/* Mountain */
+#mountain {
+  font-family: 'Raleway', sans-serif;
+}
+
+#mountain .card-title {
+  text-align: center;
+}
+
+/* Comments */
+
+#comment-box {
+  font-family: 'Raleway', sans-serif;
+}
+
+#comment-box .card-header {
+  text-align: center;
+}
+
+#comment-box .btn {
+  background-color: #5b7c5b;
+  border-color: #5b7c5b;
+}
+
+#comment-box .btn-success{
+  background-color: #5b7c5b;
+  border-color: #5b7c5b;
+}
+
+#comment {
+  text-align: left;
+  color: #000;
+}
+
+small {
+  font-family: 'Raleway', sans-serif;
+}
+
+/* Footer */
+footer {
+  background-color: #5b7c5b;
+}
+
+footer p{
+  color: #efe2d1;
+}
