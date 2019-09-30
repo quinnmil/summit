@@ -1,8 +1,5 @@
 body {
   background-color: #efe2d1;
-  height: 100%;
-  /*display: flex;*/
-  /*flex-direction: column;*/
   align-items: center;
   justify-content: center;
   margin: 0;
@@ -13,10 +10,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-html {
-  height: 100%;
-}
-
 p {
   text-align: center;
   font-family: 'Raleway', sans-serif;
@@ -25,8 +18,6 @@ p {
 
 h1 {
   text-align: center;
-  font-family: 'Poller One', cursive;
-  color: #5b7c5b;
 }
 
 li {
@@ -43,6 +34,11 @@ li {
   position: relative;
 }
 
+/* shop item
+body {
+  padding-top: 56px;
+}
+*/
 .hero-text {
   text-align: center;
   position: absolute;
@@ -54,4 +50,18 @@ li {
 
 .card-title {
   text-align: left;
+}
+
+/* Nav Bar */
+.navbar-brand {
+  font-family: 'Poller One', cursive;
+  color: #5b7c5b;
+}
+
+.navbar {
+  background-color: #efe2d1;
+}
+
+.nav-link {
+  color: #5b7c5b;
 }
