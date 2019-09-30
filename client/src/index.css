@@ -47,7 +47,7 @@ a:hover {
 #trails .list-group-item.active {
   background-color: #5b7c5b; 
   border-color: #5b7c5b; 
-  color: #efe2d1;
+  color: #fff;
 }
 
 #trails a:hover {
@@ -56,6 +56,25 @@ a:hover {
 }
 
 /* Comments */
+
+#comment-box {
+  font-family: 'Raleway', sans-serif;
+}
+
+#comment-box .card-header {
+  text-align: center;
+}
+
+#comment-box .btn {
+  background-color: #5b7c5b;
+  border-color: #5b7c5b;
+}
+
+#comment-box .btn-success{
+  background-color: #5b7c5b;
+  border-color: #5b7c5b;
+}
+
 #comment {
   text-align: left;
   color: #000;
