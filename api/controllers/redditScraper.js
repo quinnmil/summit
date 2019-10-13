@@ -38,33 +38,36 @@ const getComments = function (post, callback) {
     for (var c of comments.comments) {
       commentsBodies.push(c.body)
     }
-    callback(null, commentsBodies)
+    // console.log("comment bodies: ", commentsBodies)
+    return new Promise(resolve => commentsBodies)
   })
 }
 
-async function processArray (array) {
+async function processArray (array, callback) {
   var AllPosts = []
-  var Post = {}
-  for (var post in array) {
-    // post is an index
+  array.forEach(async (post) => {
+    var Post = {}
     // .title is the string of the title
     // .name is a hash used to loop up this post with snoowrapper
-    console.log('post: ', post, 'title:', array[post].title)
-    if (array[post].name && array[post].name !== 'done') {
-      Post.title = array[post].title
-      await (getComments(array[post].name, (err, comments) => {
-        if (!err) {
-          // console.log('comments for post: ', res[post].title)
-          // console.log(comments)
-          Post.comments = comments
-          // builder.push(Post)
-          AllPosts.push(Post)
-        }
-      })
-      )
+    // console.log('post: ', post, 'title:', post.title)
+    if (post.name && post.name !== 'done') {
+      Post.title = post.title
+      var comments = await getComments(post.name)
+      console.log('comments: ', comments)
+      Post.comments = comments
+      AllPosts.push(Post)
+      // (err, comments) => {
+      // if (!err) {
+      //   console.log('comments for post: ', post.title)
+      //   console.log(comments)
+      //   Post.comments = comments
+      //   // builder.push(Post)
+      // }
     }
-  }
+  })
   return AllPosts
+  // want this to call after each getComments has returned
+  // callback(null, AllPosts)
 }
 
 const comments = function (url, callback) {
@@ -74,10 +77,10 @@ const comments = function (url, callback) {
       // console.log(res)
       //   console.log(res)
       // AllPost is a promise
-      var AllPosts = processArray(res).then(AllPosts =>
-        AllPosts)
+      var AllPosts = processArray(res).then(AllPosts => AllPosts)
       // This waits for the promise to resolve
       // console.log(AllPosts)
+
       AllPosts.then(result => {
         console.log('allposts: ', result)
       })
