@@ -18,6 +18,8 @@ const r = new Snoowrap({
 
 // Search for the term 'south sister' and restrict results to r/mountaineering
 const SEARCHURL = 'https://www.reddit.com/r/Mountaineering/search.json?q=south sister&limit=10&restrict_sr=true'
+const LEN_BONUS = 1
+const WORD_BONUS = 1
 
 // Makes a call to the API to get a list of posts matching our search query
 const getPosts = function (url, callback) {
@@ -41,11 +43,23 @@ async function getComments (post, callback) {
   const comments = await r.getSubmission(post).expandReplies({ limit: 10, depth: 3 })
 
   // Add the comment bodies to list
-  const commentBodies = []
+  const AllComments = []
+  // console.log('comment0: ', comments.comments[0])
   for (const comment of comments.comments) {
-    commentBodies.push(comment.body)
+    var com = {}
+    com.author = comment.author.name
+    com.body = comment.body
+    com.body_html = comment.body_html
+    com.permalink = comment.permalink
+    com.score = comment.score
+    com.subreddit = comment.subreddit_name_prefixed
+    com.timestamp = comment.created_utc // .created also an optino
+    com.depth = comment.depth
+    com.guildings = comment.guildings
+
+    AllComments.push(com)
   }
-  return commentBodies
+  return AllComments
 }
 
 // Filter through an array of posts to get the data you want
@@ -58,7 +72,11 @@ async function processArray (array, callback) {
     // .title is the string of the title
     // .name is a hash used to loop up this post with snoowrapper
     if (post.name && post.name !== 'done') {
+      // console.log('post: ', post)
       Post.title = post.title
+      Post.score = post.score
+      Post.author = post.author
+      Post.timestamp = post.created_utc
       const postComments = await getComments(post.name)
       Post.comments = postComments
       return Post
@@ -74,14 +92,58 @@ async function processArray (array, callback) {
   return AllPosts
 }
 
+const WordList = [
+  'weather', 'condition', 'trail', 'path', 'time', 'season', 'cloud', 'windy', 'sun', 'climb', 'difficult', 'easy', 'challeng'
+]
+
+// Example of the kind of grading function that could be used
+function GradeComments (posts) {
+  var scores = []
+  for (const post of posts) {
+    for (const comment of post.comments) {
+      var score = 0
+      // // Question posts could be marked seperately?
+      // if (post.body.includes('?')) {
+      //   score += 1
+      // }
+      if (comment.body.length > 20) {
+        score += LEN_BONUS
+      }
+      for (const word in WordList) {
+        if (comment.body.includes(word)) {
+          score += WORD_BONUS
+        }
+      }
+      // Questions probably wont be as useful
+      if (comment.body.includes('?')) {
+        score = score - WORD_BONUS
+      }
+      comment.computedScore = score
+      scores.push(score)
+    }
+  }
+  // mean of scores
+  var total = 0
+  for (var i; i < scores.length; i++) {
+    total += scores[i]
+  }
+  var avg = total / scores.length
+  console.log('average score: ', avg)
+
+  console.log('---- Grading Complete ----')
+}
+
 // Entrypoint
 const comments = function (url, callback) {
   getPosts(url, (err, res) => {
     if (!err) {
       processArray(res)
         .then(AllPosts => {
-          console.log('allposts: ', AllPosts)
+          GradeComments(AllPosts)
+          console.log('allposts: ', JSON.stringify(AllPosts))
         })
+        .catch(error =>
+          console.log('caught error: ', error))
     } else { console.log('error: ', err) }
   })
 }
