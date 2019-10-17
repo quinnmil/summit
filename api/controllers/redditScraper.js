@@ -93,44 +93,81 @@ async function processArray (array, callback) {
 }
 
 const WordList = [
-  'weather', 'condition', 'trail', 'path', 'time', 'season', 'cloud', 'windy', 'sun', 'climb', 'difficult', 'easy', 'challeng'
+  'weather', 'condition', 'trail', 'path', 'time', 'season', 'cloud', 'windy', 'sun', 'climb', 'difficult', 'easy', 'challeng', 'permit', 'view'
 ]
 
 // Example of the kind of grading function that could be used
 function GradeComments (posts) {
   var scores = []
   for (const post of posts) {
+    var baseline = post.score * (1 / 5)
     for (const comment of post.comments) {
+      comment.body.replace(/[\t\n\\]+/g, ' ')
+      var reasons = []
       var score = 0
+      var wordCount = comment.body.split(' ').length
+
       // // Question posts could be marked seperately?
       // if (post.body.includes('?')) {
       //   score += 1
       // }
-      if (comment.body.length > 20) {
-        score += LEN_BONUS
+      var scoreDiff = comment.body.score - baseline
+      if (scoreDiff > 0) {
+        score += scoreDiff
+        reasons.push('upvotes')
       }
-      for (const word in WordList) {
-        if (comment.body.includes(word)) {
+      if (wordCount > 20) {
+        score += LEN_BONUS
+        reasons.push('length: ' + wordCount)
+      }
+      for (const w in WordList) {
+        if (comment.body.includes(WordList[w])) {
           score += WORD_BONUS
+          reasons.push('word: ' + WordList[w])
         }
       }
       // Questions probably wont be as useful
       if (comment.body.includes('?')) {
-        score = score - WORD_BONUS
+        score = score - (WORD_BONUS * 5)
+        reasons.push('question')
       }
       comment.computedScore = score
+      comment.reasons = reasons
       scores.push(score)
     }
   }
-  // mean of scores
+  getStats(scores)
+}
+
+function getStats (scores) {
+// mean of scores
   var total = 0
-  for (var i; i < scores.length; i++) {
+  var i = 0
+  // console.log('scores: ', scores)
+  for (i; i < scores.length; i++) {
     total += scores[i]
   }
+  console.log('total number of scores: ', scores.length, 'total: ', total)
   var avg = total / scores.length
   console.log('average score: ', avg)
+}
 
-  console.log('---- Grading Complete ----')
+function stripComments (Posts) {
+  var comments = []
+  for (const post of Posts) {
+    for (const comment of post.comments) {
+      comments.push(comment)
+    }
+  }
+  return comments
+}
+
+function sortCommentsbyDate (comments) {
+  comments.sort((a, b) => (b.timestamp - a.timestamp))
+}
+
+function sortCommentsbyGrade (comments) {
+  comments.sort((a, b) => (b.computedScore - a.computedScore))
 }
 
 // Entrypoint
@@ -139,8 +176,16 @@ const comments = function (url, callback) {
     if (!err) {
       processArray(res)
         .then(AllPosts => {
+          console.log('---- Grading Comments ----')
           GradeComments(AllPosts)
-          console.log('allposts: ', JSON.stringify(AllPosts))
+          console.log('---- Grading Complete ----')
+          console.log('---- Stripping Comments ----')
+          var comments = stripComments(AllPosts)
+          console.log('---- Strip Complete ----')
+          console.log('---- Sorting Comments ----')
+          sortCommentsbyGrade(comments)
+          console.log('---- Sorting Complete ----')
+          console.log('sorted comments: ', JSON.stringify(comments))
         })
         .catch(error =>
           console.log('caught error: ', error))
@@ -150,4 +195,4 @@ const comments = function (url, callback) {
 
 comments(SEARCHURL)
 
-module.exports = comments
+// module.exports = comments
