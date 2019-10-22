@@ -18,6 +18,8 @@ const r = new Snoowrap({
 
 // Search for the term 'south sister' and restrict results to r/mountaineering
 const SEARCHURL = 'https://www.reddit.com/r/Mountaineering/search.json?q=south sister&limit=10&restrict_sr=true'
+const SEARCH = 'https://www.reddit.com/r/Mountaineering/search.json?q='
+// &limit=10&restrict_sr'
 const LEN_BONUS = 1
 const WORD_BONUS = 1
 
@@ -38,7 +40,7 @@ const getPosts = function (url, callback) {
 }
 
 // Get a list of comment bodies from a post
-async function getComments (post, callback) {
+async function fetchComments (post, callback) {
   // Get this post's comments
   const comments = await r.getSubmission(post).expandReplies({ limit: 10, depth: 3 })
 
@@ -77,7 +79,7 @@ async function processArray (array, callback) {
       Post.score = post.score
       Post.author = post.author
       Post.timestamp = post.created_utc
-      const postComments = await getComments(post.name)
+      const postComments = await fetchComments(post.name)
       Post.comments = postComments
       return Post
     }
@@ -171,28 +173,35 @@ function sortCommentsbyGrade (comments) {
 }
 
 // Entrypoint
-const comments = function (url, callback) {
-  getPosts(url, (err, res) => {
-    if (!err) {
-      processArray(res)
-        .then(AllPosts => {
-          console.log('---- Grading Comments ----')
-          GradeComments(AllPosts)
-          console.log('---- Grading Complete ----')
-          console.log('---- Stripping Comments ----')
-          var comments = stripComments(AllPosts)
-          console.log('---- Strip Complete ----')
-          console.log('---- Sorting Comments ----')
-          sortCommentsbyGrade(comments)
-          console.log('---- Sorting Complete ----')
-          console.log('sorted comments: ', JSON.stringify(comments))
-        })
-        .catch(error =>
-          console.log('caught error: ', error))
-    } else { console.log('error: ', err) }
+function getComments (query, amount) {
+  // 'amount' is total num of comments to return, the query
+  // below specifies the number of posts that are searched
+  return new Promise(function (resolve, reject) {
+    getPosts(SEARCH + query + '&limit=10', (err, res) => {
+      if (!err) {
+        processArray(res)
+          .then(AllPosts => {
+            console.log('---- Grading Comments ----')
+            GradeComments(AllPosts)
+            console.log('---- Grading Complete ----')
+            console.log('---- Stripping Comments ----')
+            var comments = stripComments(AllPosts)
+            console.log('---- Strip Complete ----')
+            console.log('---- Sorting Comments ----')
+            sortCommentsbyGrade(comments)
+            console.log('---- Sorting Complete ----')
+            const commentsToReturn = comments.slice(0, amount)
+            console.log('sorted comments: ', JSON.stringify(comments))
+            resolve(JSON.stringify(commentsToReturn))
+          })
+          .catch(error =>
+            console.log('caught error: ', error))
+      } else {
+        console.log('error: ', err)
+        reject(err)
+      }
+    })
   })
 }
 
-comments(SEARCHURL)
-
-// module.exports = comments
+module.exports = getComments
