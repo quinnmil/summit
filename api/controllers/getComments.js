@@ -8,21 +8,22 @@ function scrapeAllSources (mountain, trail) {
   return new Promise((resolve, reject) => {
     var allComments = [] // all comment objects from all sources
     // TODO need to move the URLs into a 'sources' file.
-    ATScraper(ALLTRAILS_URL, function (err, data) {
-      if (!err) {
-        allComments.push(data)
-      } else {
-        console.log('All Trails failed to get data for ', mountain, trail)
-        reject(err)
-      }
-    })
-    RedditScraper(mountain, 20).then(result => {
-      console.log('received comments from reddit scraper')
+    // TODO look into using promise.all to resolve both these at once
+    ATScraper(ALLTRAILS_URL).then(result => {
       allComments.push(result)
-      resolve(allComments)
+      RedditScraper(mountain, 20).then(result => {
+        console.log('received comments from reddit scraper')
+        allComments.push(result)
+        resolve(allComments)
+      })
+        .catch(error =>
+          console.log(error))
     })
-      .catch(error =>
-        console.log(error))
+      .catch(error => {
+        console.log('All Trails failed to get data for ', mountain, trail)
+        console.log('error: ', error)
+      // reject(err)
+      })
   })
 }
 

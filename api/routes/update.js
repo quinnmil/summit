@@ -1,13 +1,23 @@
 
 const express = require('express')
 const router = express.Router()
-const scraper = require('../controllers/allTrailsScraper.js')
+const ATScraper = require('../controllers/allTrailsScraper.js')
+const RedditScraper = require('../controllers/redditScraper.js')
+const getComments = require('../controllers/getComments')
 const mongo = require('../helpers/mongo')
 
-const ALLTRAILS_URL = 'https://www.alltrails.com/trail/us/oregon/south-sister-trail'
+router.get('/all', function (req, res) {
+  getComments('south sister', 'south_ridge').then(result => {
+    console.log('got result-- all comments: ', result)
+    res.send(result)
+  }).catch(error => {
+    console.log('error in get comments: ', error)
+    res.send(error)
+  })
+})
 
-router.get('/', function (req, res) {
-  scraper(ALLTRAILS_URL, function (err, data) {
+router.get('/allTrails', function (req, res) {
+  ATScraper(ALLTRAILS_URL, function (err, data) {
     if (!err) {
       mongo.connect('south_sister', 'south_ridge' + '_comments', function (err, db, collection) {
         if (!err) {
