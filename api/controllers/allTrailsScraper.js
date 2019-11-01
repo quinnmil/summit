@@ -45,6 +45,42 @@ const getLatest = function (callback) {
   })
 }
 
+// TODO, extract wordlist and bonuses out of both scrapers
+const WordList = [
+  'weather', 'condition', 'trail', 'path', 'time', 'season', 'cloud', 'windy', 'sun', 'climb', 'difficult', 'easy', 'challeng', 'permit', 'view'
+]
+const LEN_BONUS = 1
+const WORD_BONUS = 1
+
+function gradeComments (comments) {
+  return Promise((resolve, reject) => {
+    var scores = []
+    for (const com of comments) {
+      var reasons = []
+      var score = 0
+      var wordCount = com.text.split(' ').length
+
+      if (wordCount > 20) {
+        score += LEN_BONUS
+        reasons.push('length: ', wordCount)
+      }
+      for (const w in WordList) {
+        if (com.text.includes(WordList[w])) {
+          score += WORD_BONUS
+          reasons.push('word: ' + WordList[w])
+        }
+      }
+      if (com.text.includes('?')) {
+        score = score - (WORD_BONUS * 5)
+        reasons.push('question')
+      }
+      com.computedScore = score
+      com.reasons = reasons
+      scores.push(score)
+    }
+  })
+}
+
 const scrapeComments = function (url, latestPost) {
   return Promise((resolve, reject) => {
     request(url, (error, response, html) => {
@@ -87,6 +123,7 @@ const scrapeComments = function (url, latestPost) {
               photo: null
             })
           }
+          gradeComments(comments)
         })
         // after looping through each comment
         resolve(comments)

@@ -17,7 +17,8 @@ function scrapeAllSources (mountain, trail) {
         resolve(allComments)
       })
         .catch(error =>
-          console.log(error))
+          console.log('Reddit failed to get data for ', mountain, trail)
+          console.log(error: 'error'))
     })
       .catch(error => {
         console.log('All Trails failed to get data for ', mountain, trail)
